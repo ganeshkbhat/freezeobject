@@ -16,6 +16,20 @@
 
 'use strict';
 
+
+/**
+ * isBrowser
+ *
+ * @return {*} 
+ */
+function isBrowser() {
+  if (typeof process === "object" && typeof require === "function") {
+    return false;
+  }
+  if (typeof importScripts === "function") { return false; }
+  if (typeof window === "object") { return true; }
+}
+
 const ReflectApply = Reflect.apply;
 
 // function deepFreeze(object) {
