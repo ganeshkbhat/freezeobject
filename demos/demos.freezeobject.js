@@ -15,3 +15,5 @@
 /* eslint no-console: 0 */
 
 'use strict';
+
+const freezer = require("../index.js");

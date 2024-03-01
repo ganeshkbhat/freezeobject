@@ -30,7 +30,9 @@ const ReflectApply = Reflect.apply;
 // }
 
 /**
- *
+ * `copyProps`
+ * 
+ * copy properties of the `src` object to `dest` object
  *
  * @param {*} src
  * @param {*} dest
@@ -47,9 +49,15 @@ function copyProps(src, dest) {
 }
 
 /**
+ * `deepSafe`
+ * 
+ * freeze object recursively
  *
- *
- * @param {*} object
+ * @param {*} object where properties are to be : 
+ *        `preventExtensions` (prevent from `add`, `delete`), 
+ *        `seal` (seal object - no changes even no __), 
+ *        `freeze` (freeze object - no changes other than __)
+ * 
  * @return {*} 
  */
 function deepSafe(object) {
@@ -57,25 +65,30 @@ function deepSafe(object) {
   for (const name of propNames) {
     const value = object[name];
     if ((value && typeof value === "object") || typeof value === "function") {
-      deepFreeze(value);
+      deepSafe(value);
     }
   }
   return Object.freeze(object);
 }
 
 /**
+ * `deepSafeAll`
+ * 
  *
- *
- * @param {*} object
- * @param {*} safemethods
+ * @param {*} object object where properties are to be : 
+ *        `preventExtensions` (`preventExtensions` prevent from `add`, `delete`),
+ *        `seal` (`seal` object - no changes even no __), 
+ *        `freeze` (`freeze` object - no changes other than __)
+ * 
+ * @param {*} safemethods (`default`: [`"preventExtensions"`, `"seal"`, `"freeze"`])
  * @return {*} 
  */
-function deepSafeAll(object, safemethods) {
+function deepSafeAll(object, safemethods = ["preventExtensions", "seal", "freeze"]) {
   const propNames = Reflect.ownKeys(object);
   for (const name of propNames) {
     const value = object[name];
     if ((value && typeof value === "object") || typeof value === "function") {
-      deepFreeze(value);
+      deepSafeAll(value, safemethods);
     }
   }
   if ("preventExtensions" in safemethods) Object.preventExtensions(object);
@@ -85,11 +98,13 @@ function deepSafeAll(object, safemethods) {
 }
 
 /**
+ * `makeSafe`
+ * 
+ * default implementation of nodejs internals
  *
- *
- * @param {*} unsafe
- * @param {*} safe
- * @return {*} 
+ * @param {*} unsafe object properties to be copied from 
+ * @param {*} safe object where properties are to be copied to and to be frozen
+ * @return {*} `safe` frozen object after copying all unsafe object properties
  */
 function makeSafe(unsafe, safe) {
   copyProps(unsafe.prototype, safe.prototype);
@@ -102,11 +117,15 @@ function makeSafe(unsafe, safe) {
 
 /**
  *
- *
- * @param {*} unsafe
- * @param {*} safe
- * @param {boolean} [setprototypenull=true]
- * @return {*} 
+ * `makeSafeDeep`
+ * 
+ * uses deepSafe method that implements recursive deep freezing 
+ *    of objects 
+ *    
+ * @param {*} unsafe object properties to be copied from 
+ * @param {*} safe object where properties are to be copied to and to be frozen
+ * @param {boolean} [setprototypenull] (`default`: `true`) implements setting null to prototype `Object.setPrototypeOf(yoursafeobject.prototype, null)`
+ * @return {*} `safe`
  */
 function makeSafeDeep(unsafe, safe, setprototypenull = true) {
   copyProps(unsafe.prototype, safe.prototype);
@@ -118,12 +137,18 @@ function makeSafeDeep(unsafe, safe, setprototypenull = true) {
 }
 
 /**
- *
- *
+ * `makeSafeDeepAll`
+ * 
+ * uses the deepSafeAll method that implements all 
+ *      `"preventExtensions"`, `"seal"`, `"freeze"` Object methods
+ * 
+ * alter (`add`/ `remove` options) the `safemethods` based on what Object methods you 
+ *      need to implement
+ * 
  * @param {*} unsafe
  * @param {*} safe
- * @param {string} [safemethods=["preventExtensions", "seal", "freeze"]]
- * @param {boolean} [setprototypenull=true]
+ * @param {string} [safemethods=] (`default`: `["preventExtensions", "seal", "freeze"]`) alter (add/ remove) the safemethods on what you wish to implement
+ * @param {boolean} [setprototypenull=true] implements setting null to prototype `Object.setPrototypeOf(yoursafeobject.prototype, null)`
  * @return {*} 
  */
 function makeSafeDeepAll(unsafe, safe, safemethods = ["preventExtensions", "seal", "freeze"], setprototypenull = true) {
