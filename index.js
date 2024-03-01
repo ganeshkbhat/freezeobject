@@ -43,6 +43,19 @@ const ReflectApply = Reflect.apply;
 //   return Object.freeze(object);
 // }
 
+if (!Object.getPrototypeOf) {
+  if (({}).__proto__ === Object.prototype && ([]).__proto__ === Array.prototype) {
+    Object.getPrototypeOf = function getPrototypeOf(object) {
+      return object.__proto__;
+    };
+  } else {
+    Object.getPrototypeOf = function getPrototypeOf(object) {
+      // May break if the constructor has been changed or removed
+      return object.constructor ? object.constructor.prototype : void 0;
+    };
+  }
+}
+
 /**
  * `copyProps`
  * 
@@ -51,7 +64,11 @@ const ReflectApply = Reflect.apply;
  * @param {*} src
  * @param {*} dest
  */
-function copyProps(src, dest) {
+function copyProps(src, dest, proto = false) {
+  if (!!proto) {
+    src = Object.getOwnPropertyDescriptors(src);
+    dest = Object.getOwnPropertyDescriptors(dest);
+  }
   for (const key of Reflect.ownKeys(src)) {
     if (!Reflect.getOwnPropertyDescriptor(dest, key)) {
       Reflect.defineProperty(
@@ -74,12 +91,16 @@ function copyProps(src, dest) {
  * 
  * @return {*} 
  */
-function deepSafe(object) {
-  const propNames = Reflect.ownKeys(object);
+function deepSafe(object, proto = false) {
+  if (!!proto) {
+    object = Object.getOwnPropertyDescriptors(object)
+  }
+  // const propNames = Reflect.ownKeys(object);
+  const propNames = Object.keys(object);
   for (const name of propNames) {
     const value = object[name];
     if ((value && typeof value === "object") || typeof value === "function") {
-      deepSafe(value);
+      deepSafe(value, false);
     }
   }
   return Object.freeze(object);
@@ -99,17 +120,22 @@ function deepSafe(object) {
  * @param {*} safemethods (`default`: [`"preventExtensions"`, `"seal"`, `"freeze"`])
  * @return {*} 
  */
-function deepSafeAll(object, safemethods = ["preventExtensions", "seal", "freeze"]) {
-  const propNames = Reflect.ownKeys(object);
+function deepSafeAll(object, safemethods = ["preventExtensions", "seal", "freeze"], proto = false) {
+  if (!!proto) {
+    object = Object.getOwnPropertyDescriptors(object)
+  }
+  // const propNames = Reflect.ownKeys(object);
+  const propNames = Object.keys(object);
   for (const name of propNames) {
     const value = object[name];
     if ((value && typeof value === "object") || typeof value === "function") {
-      deepSafeAll(value, safemethods);
+      deepSafeAll(value, safemethods, false);
     }
   }
-  if ("preventExtensions" in safemethods) Object.preventExtensions(object);
-  if ("seal" in safemethods) Object.seal(object);
-  if ("freeze" in safemethods) Object.freeze(object);
+  if (safemethods.includes("preventExtensions")) Object.preventExtensions(object);
+  if (safemethods.includes("seal")) Object.seal(object);
+  if (safemethods.includes("freeze")) Object.freeze(object);
+
   return object;
 }
 
@@ -123,9 +149,10 @@ function deepSafeAll(object, safemethods = ["preventExtensions", "seal", "freeze
  * @return {*} `safe` frozen object after copying all unsafe object properties
  */
 function makeSafe(unsafe, safe) {
-  copyProps(unsafe.prototype, safe.prototype);
+  copyProps(unsafe.__proto__, safe.__proto__, true);
   copyProps(unsafe, safe);
-  Object.setPrototypeOf(safe.prototype, null);
+  // Object.setPrototypeOf(safe.prototype, null);
+  Object.setPrototypeOf(safe.__proto__, null);
   Object.freeze(safe.prototype);
   Object.freeze(safe);
   return safe;
@@ -143,11 +170,13 @@ function makeSafe(unsafe, safe) {
  * @param {boolean} [setprototypenull] (`default`: `true`) implements setting null to prototype `Object.setPrototypeOf(yoursafeobject.prototype, null)`
  * @return {*} `safe`
  */
-function makeSafeDeep(unsafe, safe, setprototypenull = true) {
-  copyProps(unsafe.prototype, safe.prototype);
+function makeSafeDeep(unsafe, safe) {
+  // copyProps(unsafe.prototype, safe.prototype);
+  copyProps(unsafe.__proto__, safe.__proto__, true);
   copyProps(unsafe, safe);
-  (!!setprototypenull) ? Object.setPrototypeOf(safe.prototype, null) : null;
-  safe.prototype = deepSafe(safe.prototype);
+  // Object.setPrototypeOf(safe.prototype, null);
+  Object.setPrototypeOf(safe.__proto__, null);
+  safe.prototype = deepSafe(Object.getOwnPropertyDescriptors(safe.__proto__), true);
   safe = deepSafe(safe);
   return safe;
 }
@@ -167,11 +196,13 @@ function makeSafeDeep(unsafe, safe, setprototypenull = true) {
  * @param {boolean} [setprototypenull=true] implements setting null to prototype `Object.setPrototypeOf(yoursafeobject.prototype, null)`
  * @return {*} 
  */
-function makeSafeDeepAll(unsafe, safe, safemethods = ["preventExtensions", "seal", "freeze"], setprototypenull = true) {
-  copyProps(unsafe.prototype, safe.prototype);
+function makeSafeDeepAll(unsafe, safe, safemethods = ["preventExtensions", "seal", "freeze"]) {
+  // copyProps(unsafe.prototype, safe.prototype);
+  copyProps(unsafe.__proto__, safe.__proto__, true);
   copyProps(unsafe, safe);
-  (!!setprototypenull) ? Object.setPrototypeOf(safe.prototype, null) : null;
-  safe.prototype = deepSafeAll(safe.prototype, safemethods);
+  // Object.setPrototypeOf(safe.prototype, null);
+  Object.setPrototypeOf(safe.__proto__, null);
+  safe.prototype = deepSafeAll(safe.__proto__, safemethods, true);
   safe = deepSafeAll(safe, safemethods);
   return safe;
 }
@@ -179,7 +210,7 @@ function makeSafeDeepAll(unsafe, safe, safemethods = ["preventExtensions", "seal
 if (!isBrowser()) {
 
   let preventSealFreeze = makeSafeDeepAll;
-  
+
   module.exports.makeSafe = makeSafe;
   module.exports.makeSafeDeep = makeSafeDeep;
   module.exports.makeSafeDeepAll = makeSafeDeepAll;

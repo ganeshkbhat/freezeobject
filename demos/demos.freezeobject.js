@@ -25,36 +25,64 @@ let d = { "test": 10, "deep": { "deeper": { "t": 10 } } };
 let safe = freezer.makeSafe(o, c);
 
 try {
-  safe.testers = "new"
+  safe.test = "new";
 } catch (e) {
   console.log(e);
+}
+
+try {
+  safe.testers = "new";
+} catch (e) {
+  console.log("makeSafe: ", e);
+}
+
+try {
+  delete safe.test;
+} catch (e) {
+  console.log("makeSafe: ", e);
 }
 
 safe = freezer.makeSafeDeep(d, {});
 
 try {
-  safe.testers = "new"
+  safe.test = "new";
 } catch (e) {
-  console.log(e);
+  console.log("makeSafeDeep: ", e);
 }
+
+try {
+  safe.testers = "new";
+} catch (e) {
+  console.log("makeSafeDeep: ", e);
+}
+
+try {
+  delete safe.test;
+} catch (e) {
+  console.log("makeSafeDeep: ", e);
+}
+
 
 safe = freezer.makeSafeDeepAll(d, {});
 
 try {
-  safe.test = "new"
+  safe.test = "new test";
+  console.log("makeSafeDeepAll: ", safe.test);
 } catch (e) {
-  console.log(e);
+  console.log("makeSafeDeepAll: ", e);
 }
 
 try {
-  safe.testers = "new"
-  delete safe.test
+  safe.testers = "new testers";
+  console.log("makeSafeDeepAll: ", safe.testers);
 } catch (e) {
-  console.log(e);
+  console.log("makeSafeDeepAll: ", e);
 }
 
 try {
   delete safe.test
+  console.log("makeSafeDeepAll: ", safe.test);
+  console.log("makeSafeDeepAll: ", safe.testers);
 } catch (e) {
-  console.log(e);
+  console.log("makeSafeDeepAll: ", e);
 }

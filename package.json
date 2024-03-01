@@ -23,7 +23,8 @@
     "test": "mocha --reporter spec --recursive --timeout 60000",
     "uglify": "uglifyjs --compress --mangle reserved=['$','require','exports'] index.js -o index.min.js",
     "gitadd": "git add .",
-    "build": "tsc"
+    "tsc": "tsc",
+    "build": "webpack"
   },
   "pre-commit": {
     "run": [
@@ -32,9 +33,7 @@
       "test"
     ]
   },
-  "keywords": [
-    
-  ],
+  "keywords": [],
   "author": "Ganesh <ganeshsurfs@gmail.com>",
   "license": "MIT",
   "devDependencies": {
@@ -48,8 +47,11 @@
     "pre-commit": "^1.2.2",
     "pre-push": "^0.1.4",
     "sinon": "^17.0.1",
+    "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
     "uglify-js": "^3.17.4",
-    "unimported": "^1.31.1"
+    "unimported": "^1.31.1",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4"
   }
 }
