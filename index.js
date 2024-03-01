@@ -74,7 +74,9 @@ function deepSafe(object) {
 /**
  * `deepSafeAll`
  * 
- *
+ * alter (`add`/ `remove` options) the `safemethods` based on what Object methods you 
+ *      need to implement
+ * 
  * @param {*} object object where properties are to be : 
  *        `preventExtensions` (`preventExtensions` prevent from `add`, `delete`),
  *        `seal` (`seal` object - no changes even no __), 
@@ -139,7 +141,7 @@ function makeSafeDeep(unsafe, safe, setprototypenull = true) {
 /**
  * `makeSafeDeepAll`
  * 
- * uses the deepSafeAll method that implements all 
+ * uses the package `deepSafeAll` method that implements all 
  *      `"preventExtensions"`, `"seal"`, `"freeze"` Object methods
  * 
  * alter (`add`/ `remove` options) the `safemethods` based on what Object methods you 
