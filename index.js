@@ -163,10 +163,11 @@ function makeSafeDeepAll(unsafe, safe, safemethods = ["preventExtensions", "seal
 }
 
 if (!isBrowser()) {
-
+  let preventSealFreeze = makeSafeDeepAll;
   module.exports.makeSafe = makeSafe;
   module.exports.makeSafeDeep = makeSafeDeep;
   module.exports.makeSafeDeepAll = makeSafeDeepAll;
+  module.exports.preventSealFreeze = makeSafeDeepAll;
   module.exports.deepSafe = deepSafe;
   module.exports.deepSafeAll = deepSafeAll;
   module.exports.copyProps = copyProps;
@@ -175,6 +176,7 @@ if (!isBrowser()) {
     makeSafe,
     makeSafeDeep,
     makeSafeDeepAll,
+    preventSealFreeze,
     deepSafe,
     deepSafeAll,
     copyProps
