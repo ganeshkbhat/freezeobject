@@ -28,7 +28,6 @@
   },
   "pre-commit": {
     "run": [
-      "build",
       "uglify",
       "gitadd",
       "test"
