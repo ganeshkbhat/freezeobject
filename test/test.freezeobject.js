@@ -189,7 +189,6 @@ describe('[request tests] Tests to check if makeSafeDeep makes immutable object 
 
 });
 
-
 describe('[request tests] Tests to check if makeSafeDeepAll makes immutable object as needed', () => {
   let tst, written;
   before(() => {
