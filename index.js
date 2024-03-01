@@ -152,7 +152,7 @@ function makeSafe(unsafe, safe) {
   copyProps(unsafe.__proto__, safe.__proto__, true);
   copyProps(unsafe, safe);
   // Object.setPrototypeOf(safe.prototype, null);
-  Object.setPrototypeOf(safe.__proto__, null);
+  Object.setPrototypeOf(safe.__proto__ ? safe.__proto__ : Object.getPrototypeOf(safe), null);
   Object.freeze(safe.prototype);
   Object.freeze(safe);
   return safe;
@@ -176,7 +176,7 @@ function makeSafeDeep(unsafe, safe) {
   copyProps(unsafe, safe);
   // Object.setPrototypeOf(safe.prototype, null);
   Object.setPrototypeOf(safe.__proto__, null);
-  safe.prototype = deepSafe(Object.getOwnPropertyDescriptors(safe.__proto__), true);
+  safe.prototype = deepSafe(safe.__proto__ ? safe.__proto__ : Object.getPrototypeOf(safe), true);
   safe = deepSafe(safe);
   return safe;
 }
@@ -198,11 +198,11 @@ function makeSafeDeep(unsafe, safe) {
  */
 function makeSafeDeepAll(unsafe, safe, safemethods = ["preventExtensions", "seal", "freeze"]) {
   // copyProps(unsafe.prototype, safe.prototype);
-  copyProps(unsafe.__proto__, safe.__proto__, true);
+  copyProps(unsafe.__proto__ ? Object.getPrototypeOf(unsafe) : void 0, safe.__proto__ ? Object.getPrototypeOf(unsafe) : void 0, true);
   copyProps(unsafe, safe);
   // Object.setPrototypeOf(safe.prototype, null);
   Object.setPrototypeOf(safe.__proto__, null);
-  safe.prototype = deepSafeAll(safe.__proto__, safemethods, true);
+  safe.prototype = deepSafeAll(safe.__proto__ ? safe.__proto__ : Object.getPrototypeOf(safe), safemethods, true);
   safe = deepSafeAll(safe, safemethods);
   return safe;
 }
