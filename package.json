@@ -1,7 +1,7 @@
 {
   "name": "freezeobject",
   "version": "1.0.0",
-  "description": "make a safe freeze object freezeobject - as defined and used in node internals",
+  "description": "make a safe freeze object freezeobject - better usage [modified node internals] than as defined and used in node internals",
   "main": "index.js",
   "exports": {
     "require": "./index.js",
