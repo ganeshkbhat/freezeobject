@@ -37,7 +37,7 @@ const { makeSafe, makeSafeDeep, makeSafeDeepAll } = require("../index");
 // check if you can extend keyvalue of prototype of prototype (recursive checks until 3 levels)
 
 
-describe('[request tests] Tests to check if makeSafe makes immutable object as needed', () => {
+describe('[freeze object tests] Tests to check if makeSafe makes immutable object as needed', () => {
   let tst, written;
   before(() => {
 
@@ -167,7 +167,7 @@ describe('[request tests] Tests to check if makeSafe makes immutable object as n
 
   });
 
-  it('should be able to delete properties of object nested keys', () => {
+  it('should be able to delete properties of object nested keys - 2 levels', () => {
     let a = { "test": 10, "deep": { "deeper": { "t": 10 } } };
     let b = {};
     let actual = true;
@@ -184,7 +184,7 @@ describe('[request tests] Tests to check if makeSafe makes immutable object as n
     }
   });
 
-  it('should be able to assign - create new properties of object prototype', () => {
+  it('should be able to assign - create new properties of object prototype - 1 levels', () => {
     let a = { "test": 10, "deep": { "deeper": { "t": 10 } }, "proto": Object.create({}) };
     let b = {};
     let actual = true;
@@ -202,7 +202,7 @@ describe('[request tests] Tests to check if makeSafe makes immutable object as n
 
   });
 
-  it('should not be able to delete properties of object prototype', () => {
+  it('should not be able to delete properties of object prototype - 1 levels', () => {
     let a = { "test": 10, "deep": { "deeper": { "t": 10 } }, "proto": Object.create({}) };
     let b = {};
     let actual = true;
@@ -220,7 +220,7 @@ describe('[request tests] Tests to check if makeSafe makes immutable object as n
 
   });
 
-  it('should be able to delete properties of object nested prototype', () => {
+  it('should be able to delete properties of object nested prototype - 2 levels', () => {
     let a = { "test": 10, "deep": { "deeper": { "t": 10 } }, "proto": Object.create({}) };
     let b = {};
     let actual = true;
@@ -239,7 +239,7 @@ describe('[request tests] Tests to check if makeSafe makes immutable object as n
 
 });
 
-describe('[request tests] Tests to check if makeSafeDeep makes immutable object as needed', () => {
+describe('[freeze object tests] Tests to check if makeSafeDeep makes immutable object as needed', () => {
   let tst, written;
   before(() => {
 
@@ -297,7 +297,7 @@ describe('[request tests] Tests to check if makeSafeDeep makes immutable object 
     }
   });
 
-  it('should not be able to reassign nested properties of object', () => {
+  it('should not be able to reassign nested properties of object - 2 levels', () => {
     let a = { "test": 10, "deep": { "deeper": { "t": 10 } } };
     let b = {};
     let actual = true;
@@ -314,7 +314,7 @@ describe('[request tests] Tests to check if makeSafeDeep makes immutable object 
 
   });
 
-  it('should not be able to assign - create new nested properties of object', () => {
+  it('should not be able to assign - create new nested properties of object - 2 levels', () => {
     let a = { "test": 10, "deep": { "deeper": { "t": 10 } } };
     let b = {};
     let actual = true;
@@ -331,7 +331,7 @@ describe('[request tests] Tests to check if makeSafeDeep makes immutable object 
 
   });
 
-  it('should not be able to delete nested properties of object', () => {
+  it('should not be able to delete nested properties of object - 2 levels', () => {
     let a = { "test": 10, "deep": { "deeper": { "t": 10 } } };
     let b = {};
     let actual = true;
@@ -347,7 +347,7 @@ describe('[request tests] Tests to check if makeSafeDeep makes immutable object 
     }
   });
 
-  it('should not be able to assign - create new properties of object nested keys', () => {
+  it('should not be able to assign - create new properties of object nested keys - 3 levels', () => {
     let a = { "test": 10, "deep": { "deeper": { "t": 10 } } };
     let b = {};
     let actual = true;
@@ -365,7 +365,7 @@ describe('[request tests] Tests to check if makeSafeDeep makes immutable object 
 
   });
 
-  it('should not be able to delete properties of object nested keys', () => {
+  it('should not be able to delete properties of object nested keys - 2 levels', () => {
     let a = { "test": 10, "deep": { "deeper": { "t": 10 } } };
     let b = {};
     let actual = true;
@@ -382,7 +382,24 @@ describe('[request tests] Tests to check if makeSafeDeep makes immutable object 
     }
   });
 
-  it('should not be able to assign - create new properties of object prototype', () => {
+  it('should not be able to delete properties of object nested keys - 1 levels', () => {
+    let a = { "test": 10, "deep": { "deeper": { "t": 10 } } };
+    let b = {};
+    let actual = true;
+    let expected = true;
+
+    b = makeSafeDeep(b, a);
+
+    try {
+      delete b.deep;
+      expect(false).to.equal(expected);
+    } catch (e) {
+      expect(!!e).to.equal(expected);
+      // expect(JSON.stringify(e).includes("TypeError: Cannot delete property")).to.equal(expected);
+    }
+  });
+
+  it('should not be able to assign - create new properties of object prototype - 1 levels', () => {
     let a = { "test": 10, "deep": { "deeper": { "t": 10 } }, "proto": Object.create({}) };
     let b = {};
     let actual = true;
@@ -400,7 +417,7 @@ describe('[request tests] Tests to check if makeSafeDeep makes immutable object 
 
   });
 
-  it('should not be able to delete new properties of object prototype', () => {
+  it('should not be able to delete new properties of object prototype - 1 levels', () => {
     let a = { "test": 10, "deep": { "deeper": { "t": 10 } }, "proto": Object.create({}) };
     let b = {};
     let actual = true;
@@ -418,7 +435,7 @@ describe('[request tests] Tests to check if makeSafeDeep makes immutable object 
 
   });
 
-  it('should not be able to delete properties of object nested prototype', () => {
+  it('should not be able to delete properties of object nested prototype - 2 levels', () => {
     let a = { "test": 10, "deep": { "deeper": { "t": 10 } }, "proto": Object.create({}) };
     let b = {};
     let actual = true;
@@ -437,7 +454,7 @@ describe('[request tests] Tests to check if makeSafeDeep makes immutable object 
 
 });
 
-describe('[request tests] Tests to check if makeSafeDeepAll makes immutable object as needed', () => {
+describe('[freeze object tests] Tests to check if makeSafeDeepAll makes immutable object as needed', () => {
   let tst, written;
   before(() => {
 
@@ -539,6 +556,161 @@ describe('[request tests] Tests to check if makeSafeDeepAll makes immutable obje
 
     try {
       delete b.deep.deeper;
+    } catch (e) {
+      expect(!!e).to.equal(expected);
+      // expect(JSON.stringify(e).includes("TypeError: Cannot delete property")).to.equal(expected);
+    }
+  });
+
+  it('should not be able to reassign nested properties of object - 2 levels', () => {
+    let a = { "test": 10, "deep": { "deeper": { "t": 10 } } };
+    let b = {};
+    let actual = true;
+    let expected = true;
+
+    b = makeSafeDeepAll(b, a);
+
+    try {
+      b.deep.deeper = 10;
+    } catch (e) {
+      expect(!!e).to.equal(expected);
+      // expect(JSON.stringify(e).includes("TypeError: Cannot assign to read only property")).to.equal(expected);
+    }
+
+  });
+
+  it('should not be able to assign - create new nested properties of object - 2 levels', () => {
+    let a = { "test": 10, "deep": { "deeper": { "t": 10 } } };
+    let b = {};
+    let actual = true;
+    let expected = true;
+
+    b = makeSafeDeepAll(b, a);
+
+    try {
+      b.deep.deepersnew = 10;
+    } catch (e) {
+      expect(!!e).to.equal(expected);
+      // expect(JSON.stringify(e).includes("TypeError: Cannot assign to read only property")).to.equal(expected);
+    }
+
+  });
+
+  it('should not be able to delete nested properties of object - 2 levels', () => {
+    let a = { "test": 10, "deep": { "deeper": { "t": 10 } } };
+    let b = {};
+    let actual = true;
+    let expected = true;
+
+    b = makeSafeDeepAll(b, a);
+
+    try {
+      delete b.deep.deeper;
+    } catch (e) {
+      expect(!!e).to.equal(expected);
+      // expect(JSON.stringify(e).includes("TypeError: Cannot delete property")).to.equal(expected);
+    }
+  });
+
+  it('should not be able to assign - create new properties of object nested keys - 3 levels', () => {
+    let a = { "test": 10, "deep": { "deeper": { "t": 10 } } };
+    let b = {};
+    let actual = true;
+    let expected = true;
+
+    b = makeSafeDeepAll(b, a);
+
+    try {
+      b.deep.deeper.t = 20;
+      expect(false).to.equal(expected);
+    } catch (e) {
+      expect(!!e).to.equal(expected);
+      // expect(JSON.stringify(e).includes("TypeError: Cannot assign to read only property")).to.equal(expected);
+    }
+
+  });
+
+  it('should not be able to delete properties of object nested keys - 2 levels', () => {
+    let a = { "test": 10, "deep": { "deeper": { "t": 10 } } };
+    let b = {};
+    let actual = true;
+    let expected = true;
+
+    b = makeSafeDeepAll(b, a);
+
+    try {
+      delete b.deep.deeper;
+      expect(false).to.equal(expected);
+    } catch (e) {
+      expect(!!e).to.equal(expected);
+      // expect(JSON.stringify(e).includes("TypeError: Cannot delete property")).to.equal(expected);
+    }
+  });
+
+  it('should not be able to delete properties of object nested keys - 1 levels', () => {
+    let a = { "test": 10, "deep": { "deeper": { "t": 10 } } };
+    let b = {};
+    let actual = true;
+    let expected = true;
+
+    b = makeSafeDeepAll(b, a);
+
+    try {
+      delete b.deep;
+      expect(false).to.equal(expected);
+    } catch (e) {
+      expect(!!e).to.equal(expected);
+      // expect(JSON.stringify(e).includes("TypeError: Cannot delete property")).to.equal(expected);
+    }
+  });
+
+  it('should not be able to assign - create new properties of object prototype - 1 levels', () => {
+    let a = { "test": 10, "deep": { "deeper": { "t": 10 } }, "proto": Object.create({}) };
+    let b = {};
+    let actual = true;
+    let expected = true;
+
+    b = makeSafeDeepAll(b, a);
+
+    try {
+      b.__proto__.test = 20;
+      expect(false).to.equal(expected);
+    } catch (e) {
+      expect(!!e).to.equal(expected);
+      // expect(JSON.stringify(e).includes("TypeError: Cannot assign to read only property")).to.equal(expected);
+    }
+
+  });
+
+  it('should not be able to delete new properties of object prototype - 1 levels', () => {
+    let a = { "test": 10, "deep": { "deeper": { "t": 10 } }, "proto": Object.create({}) };
+    let b = {};
+    let actual = true;
+    let expected = true;
+
+    b = makeSafeDeepAll(b, a);
+
+    try {
+      delete b.__proto__;
+      expect(false).to.equal(expected);
+    } catch (e) {
+      expect(!!e).to.equal(expected);
+      // expect(JSON.stringify(e).includes("TypeError: Cannot assign to read only property")).to.equal(expected);
+    }
+
+  });
+
+  it('should not be able to delete properties of object nested prototype - 2 levels', () => {
+    let a = { "test": 10, "deep": { "deeper": { "t": 10 } }, "proto": Object.create({}) };
+    let b = {};
+    let actual = true;
+    let expected = true;
+
+    b = makeSafeDeepAll(b, a);
+
+    try {
+      delete b.proto.__proto__;
+      expect(false).to.equal(expected);
     } catch (e) {
       expect(!!e).to.equal(expected);
       // expect(JSON.stringify(e).includes("TypeError: Cannot delete property")).to.equal(expected);
