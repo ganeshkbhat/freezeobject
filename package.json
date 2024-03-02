@@ -1,5 +1,5 @@
 {
-  "name": "freezeobject",
+  "name": "safefreeze",
   "version": "1.0.0",
   "description": "make a safe freeze object freezeobject - better usage [modified node internals] than as defined and used in node internals",
   "main": "index.js",
@@ -34,7 +34,25 @@
       "test"
     ]
   },
-  "keywords": [],
+  "keywords": [
+    "freeze object",
+    "freeze object recursively",
+    "freeze object recursively with prototype",
+    "freeze object recursively with prototype and stop extending",
+    "freeze object recursively with prototype and stop reassigning",
+    "freeze object recursively with prototype and stop assigning",
+    "freeze",
+    "seal", 
+    "assign", 
+    "reassign",
+    "extend", 
+    "stop extending",
+    "stop reassign",
+    "stop assigning",
+    "prototype",
+    "nesting freeze",
+    "freeze prototype"
+  ],
   "author": "Ganesh <ganeshsurfs@gmail.com>",
   "license": "MIT",
   "devDependencies": {
