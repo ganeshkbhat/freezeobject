@@ -19,6 +19,24 @@
 const { expect } = require('chai');
 const { makeSafe, makeSafeDeep, makeSafeDeepAll } = require("../index");
 
+
+// check if you can reassign value
+// check if you can reassign value of prototype
+// check if you can reassign value of prototype of prototype (recursive checks until 3 levels)
+
+// check if you can assign keyvalue
+// check if you can assign keyvalue of prototype
+// check if you can assign keyvalue of prototype of prototype (recursive checks until 3 levels)
+
+// check if you can delete keyvalue
+// check if you can delete keyvalue of prototype
+// check if you can delete keyvalue of prototype of prototype (recursive checks until 3 levels)
+
+// check if you can extend keyvalue
+// check if you can extend keyvalue of prototype
+// check if you can extend keyvalue of prototype of prototype (recursive checks until 3 levels)
+
+
 describe('[request tests] Tests to check if makeSafe makes immutable object as needed', () => {
   let tst, written;
   before(() => {
@@ -298,3 +316,4 @@ describe('[request tests] Tests to check if makeSafeDeepAll makes immutable obje
   });
 
 });
+
